@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SocialPlatforms.Impl;
 public class Lander : MonoBehaviour
 {
 
@@ -36,14 +37,20 @@ public class Lander : MonoBehaviour
 
     }
 
-    
+ 
 
     void OnCollisionEnter2D(Collision2D collision)
     {
         // 1. Calculate Physics Data
         float velocityMag = collision.relativeVelocity.magnitude;
         float alignment = Vector2.Dot(Vector2.up, transform.up);
-
+        if(collision.collider.TryGetComponent<LandingPad>(out var landingPad))
+        {
+            float scoreMultiplier = landingPad.GetScoreMultiplier();
+            int score = Mathf.RoundToInt((CalculateAngleScore(alignment) + CalculateSpeedScore(velocityMag)) * scoreMultiplier);
+            Debug.Log($"Landed on Pad! Score: {score} (Multiplier: {scoreMultiplier})");
+        }
+        
         // 2. Check for Failure Conditions
         if (velocityMag > MaxLandingVelocity)
         {
@@ -63,10 +70,12 @@ public class Lander : MonoBehaviour
         float angleScore = CalculateAngleScore(alignment);
         float speedScore = CalculateSpeedScore(velocityMag);
 
+        
         Debug.Log($"Scores -> Angle: {angleScore} | Speed: {speedScore}");
+        
     }
 
-    
+
     private float CalculateAngleScore(float alignment)
     {
         // Remaps alignment (0.9 to 1.0) to a score (0 to 100)
