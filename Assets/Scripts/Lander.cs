@@ -1,9 +1,14 @@
+using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms.Impl;
 public class Lander : MonoBehaviour
 {
+    public event EventHandler onLeftForce;
+    public event EventHandler onRightForce;
+    public event EventHandler onMiddleForce;
+    public event EventHandler onBeforeForce;
 
     private Rigidbody2D lanbderRb;
     [SerializeField] private float Force = 700f;
@@ -13,25 +18,27 @@ public class Lander : MonoBehaviour
     private const float MaxScorePerCategory = 100f;
     private void Awake()
     {
+        
         lanbderRb = GetComponent<Rigidbody2D>();   
     }
     
     private void FixedUpdate()
     {
-        
-        if(Keyboard.current.wKey.isPressed)
+        onBeforeForce?.Invoke(this, EventArgs.Empty);
+        if (Keyboard.current.wKey.isPressed)
         {
            
             lanbderRb.AddForce(transform.up * Force * Time.deltaTime);
+                onMiddleForce?.Invoke(this, EventArgs.Empty);
         }
          if(Keyboard.current.aKey.isPressed)
         {
-
+            onLeftForce?.Invoke(this, EventArgs.Empty);
             lanbderRb.AddTorque(turnSpeed * Time.deltaTime);
         }
          if(Keyboard.current.dKey.isPressed)
         {
-            
+            onRightForce?.Invoke(this, EventArgs.Empty);    
             lanbderRb.AddTorque(-turnSpeed * Time.deltaTime);
         }
 
