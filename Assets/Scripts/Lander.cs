@@ -14,8 +14,10 @@ public class Lander : MonoBehaviour
     [SerializeField] private float Force = 700f;
     [SerializeField] private float turnSpeed = 100f;
     private const float MaxLandingVelocity = 4f;
-    private const float MinLandingAlignment = 0.9f; // Roughly 25 degrees
+    private const float MinLandingAlignment = 0.9f; 
     private const float MaxScorePerCategory = 100f;
+
+    private float fuelAmount = 10f;
     private void Awake()
     {
         
@@ -25,10 +27,23 @@ public class Lander : MonoBehaviour
     private void FixedUpdate()
     {
         onBeforeForce?.Invoke(this, EventArgs.Empty);
+        Debug.Log($"Fuel: {fuelAmount:F2}");
+        if (fuelAmount <= 0)
+        {
+            return;
+        }
+
+        if(Keyboard.current.wKey.isPressed || 
+           Keyboard.current.aKey.isPressed ||
+           Keyboard.current.dKey.isPressed)
+        {
+            ConsumeFuel();
+        }
+        
         if (Keyboard.current.wKey.isPressed)
         {
-           
-            lanbderRb.AddForce(transform.up * Force * Time.deltaTime);
+
+                lanbderRb.AddForce(transform.up * Force * Time.deltaTime);
                 onMiddleForce?.Invoke(this, EventArgs.Empty);
         }
          if(Keyboard.current.aKey.isPressed)
@@ -58,7 +73,7 @@ public class Lander : MonoBehaviour
             Debug.Log($"Landed on Pad! Score: {score} (Multiplier: {scoreMultiplier})");
         }
         
-        // 2. Check for Failure Conditions
+    
         if (velocityMag > MaxLandingVelocity)
         {
             Debug.Log("Crashed: Too fast!");
@@ -71,7 +86,6 @@ public class Lander : MonoBehaviour
             return;
         }
 
-        // 3. Successful Landing - Calculate Scores
         Debug.Log("Successful landing!");
 
         float angleScore = CalculateAngleScore(alignment);
@@ -98,6 +112,25 @@ public class Lander : MonoBehaviour
         // 0 speed = 100 points, Max speed = 0 points
         float score = 1.0f - (velocity / MaxLandingVelocity);
         return Mathf.Clamp(score * MaxScorePerCategory, 0, MaxScorePerCategory);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider2D)
+    {
+        if (collider2D.TryGetComponent<FuelPickup>(out var fuelPickup))
+        {
+            Debug.Log("Fuel pickup collected!");
+            float addFuelAmount = 10f;
+            fuelAmount += addFuelAmount;
+            fuelPickup.DestroySelf();
+        }
+       
+    }
+
+
+    private void ConsumeFuel()
+    {
+        float fuelConsumed = 1f; // Adjust as needed
+        fuelAmount -= fuelConsumed * Time.deltaTime;
     }
 }
 
