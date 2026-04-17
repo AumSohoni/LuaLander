@@ -1,83 +1,42 @@
+using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
 
-namespace SpaceRocket
+public class GameManager : MonoBehaviour
 {
-    public enum GameState { Starting, Playing, Won, Crashed, OutOfFuel }
 
-    public class GameManager : MonoBehaviour
+   
+
+    private int score;
+
+    private void Start()
     {
-        public static GameManager Instance { get; private set; }
-
-        [Header("References")]
-        [SerializeField] private FuelSystem fuelSystem;
-        [SerializeField] private LandingManager landingManager;
-        [SerializeField] private UIManager uiManager;
-
-        private GameState currentState;
-
-        private void Awake()
-        {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-        }
-
-        private void Start()
-        {
-            SetGameState(GameState.Playing);
-
-            // Subscribe to events
-            fuelSystem.OnOutOfFuel += HandleOutOfFuel;
-            landingManager.OnCrashed += HandleCrashed;
-            landingManager.OnLandedSuccessfully += HandleWin;
-        }
-
-        public void SetGameState(GameState newState)
-        {
-            currentState = newState;
-            uiManager.UpdateGameStateUI(newState);
-            
-            if (newState == GameState.Won || newState == GameState.Crashed || newState == GameState.OutOfFuel)
-            {
-                // Optionally stop the rocket's movement here or wait a few seconds then restart
-                StartCoroutine(RestartAfterDelay(3f));
-            }
-        }
-
-        private void HandleOutOfFuel()
-        {
-            if (currentState == GameState.Playing)
-            {
-                SetGameState(GameState.OutOfFuel);
-            }
-        }
-
-        private void HandleCrashed()
-        {
-            if (currentState == GameState.Playing)
-            {
-                SetGameState(GameState.Crashed);
-            }
-        }
-
-        private void HandleWin()
-        {
-            if (currentState == GameState.Playing)
-            {
-                SetGameState(GameState.Won);
-            }
-        }
-
-        private IEnumerator RestartAfterDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            RestartLevel();
-        }
-
-        public void RestartLevel()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
+        Lander.Instance.onCoinPickup += lander_CoinPickup;  
+        Lander.Instance.onLanded += lander_Landed;
     }
+
+    private void lander_Landed(object sender, Lander.LandedEventArgs e)
+    {
+       e.Score = AddScore(e.Score);
+    }
+
+    private void lander_CoinPickup(object sender, EventArgs e)
+    {
+        AddScore(500);
+    }
+
+    private int AddScore(int addScoreAmount)
+    {
+        score += addScoreAmount;
+        Debug.Log($"Score: {score}");
+        return score;
+
+    }
+
+
+
+
+
+
+
+
 }

@@ -5,10 +5,21 @@ using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms.Impl;
 public class Lander : MonoBehaviour
 {
+
+
+    public static Lander Instance { get; private set; }
+
+
     public event EventHandler onLeftForce;
     public event EventHandler onRightForce;
     public event EventHandler onMiddleForce;
     public event EventHandler onBeforeForce;
+    public event EventHandler onCoinPickup;
+    public event EventHandler<LandedEventArgs> onLanded;
+    public class LandedEventArgs : EventArgs
+    {
+        public int Score { get; set; }
+    }
 
     private Rigidbody2D lanbderRb;
     [SerializeField] private float Force = 700f;
@@ -18,16 +29,17 @@ public class Lander : MonoBehaviour
     private const float MaxScorePerCategory = 100f;
 
     private float fuelAmount = 10f;
+    private float coinAmount = 0f;
     private void Awake()
     {
-        
+        Instance = this;
         lanbderRb = GetComponent<Rigidbody2D>();   
     }
     
     private void FixedUpdate()
     {
         onBeforeForce?.Invoke(this, EventArgs.Empty);
-        Debug.Log($"Fuel: {fuelAmount:F2}");
+
         if (fuelAmount <= 0)
         {
             return;
@@ -93,9 +105,10 @@ public class Lander : MonoBehaviour
 
         
         Debug.Log($"Scores -> Angle: {angleScore} | Speed: {speedScore}");
-        
-    }
+            onLanded?.Invoke(this, new LandedEventArgs { 
+                Score = Mathf.RoundToInt(angleScore + speedScore) });
 
+    }
 
     private float CalculateAngleScore(float alignment)
     {
@@ -118,12 +131,19 @@ public class Lander : MonoBehaviour
     {
         if (collider2D.TryGetComponent<FuelPickup>(out var fuelPickup))
         {
-            Debug.Log("Fuel pickup collected!");
+          
             float addFuelAmount = 10f;
             fuelAmount += addFuelAmount;
             fuelPickup.DestroySelf();
         }
-       
+
+        if (collider2D.TryGetComponent<CoinPickup>(out var coinPickup))
+        {
+           onCoinPickup?.Invoke(this, EventArgs.Empty);
+            coinPickup.DestroySelf();
+            
+        }
+
     }
 
 
