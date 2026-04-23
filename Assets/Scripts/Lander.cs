@@ -28,7 +28,10 @@ public class Lander : MonoBehaviour
     private const float MinLandingAlignment = 0.9f; 
     private const float MaxScorePerCategory = 100f;
 
+    public float FuelAmount => fuelAmount;
+    public float CoinAmount => coinAmount;
     private float fuelAmount = 10f;
+    private float maxFuel = 10f;
     private float coinAmount = 0f;
     private void Awake()
     {
@@ -134,11 +137,13 @@ public class Lander : MonoBehaviour
           
             float addFuelAmount = 10f;
             fuelAmount += addFuelAmount;
+            if (fuelAmount > maxFuel) maxFuel = fuelAmount;
             fuelPickup.DestroySelf();
         }
 
         if (collider2D.TryGetComponent<CoinPickup>(out var coinPickup))
         {
+           coinAmount++;
            onCoinPickup?.Invoke(this, EventArgs.Empty);
             coinPickup.DestroySelf();
             
@@ -151,6 +156,27 @@ public class Lander : MonoBehaviour
     {
         float fuelConsumed = 1f; // Adjust as needed
         fuelAmount -= fuelConsumed * Time.deltaTime;
+    }
+
+    public float GetFuelAmount()
+    {
+        return fuelAmount;
+    }   
+
+    public float GetFuelAmountNormalized()
+    {
+        return Mathf.Clamp01(fuelAmount / maxFuel);
+    }
+
+    public float GetSpeedX()
+    {
+        return lanbderRb.linearVelocityX;
+    }
+
+    public float GetSpeedY() { 
+    
+        return lanbderRb.linearVelocityY;
+
     }
 }
 

@@ -2,7 +2,7 @@
 - Project name: 2D-SpaceRocket
 - Unity version: Unity 6000.2.10f1
 - Active game object:
-  - Name: GameManager
+  - Name: StatsUI
   - Tag: Untagged
-  - Layer: Default
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
