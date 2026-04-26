@@ -18,8 +18,21 @@ public class Lander : MonoBehaviour
     public event EventHandler<LandedEventArgs> onLanded;
     public class LandedEventArgs : EventArgs
     {
+        public LandingType landingType;
         public int Score { get; set; }
+        public float LandingSpeed { get; set; }
+        public float LandingAngle { get; set; }
+        public float Multiplier { get; set; }
     }
+
+    public enum LandingType
+    {
+        Sucess,
+        WrongLandingAngle,
+        TooSteepAngle,
+        TooFastLanding
+    }
+
 
     private Rigidbody2D lanbderRb;
     [SerializeField] private float Force = 700f;
@@ -33,6 +46,8 @@ public class Lander : MonoBehaviour
     private float fuelAmount = 10f;
     private float maxFuel = 10f;
     private float coinAmount = 0f;
+    private bool hasLanded = false;
+
     private void Awake()
     {
         Instance = this;
@@ -43,7 +58,7 @@ public class Lander : MonoBehaviour
     {
         onBeforeForce?.Invoke(this, EventArgs.Empty);
 
-        if (fuelAmount <= 0)
+        if (fuelAmount <= 0 || hasLanded)
         {
             return;
         }
@@ -74,30 +89,55 @@ public class Lander : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (hasLanded && Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }
+    }
+
  
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (hasLanded) return;
+
         // 1. Calculate Physics Data
         float velocityMag = collision.relativeVelocity.magnitude;
         float alignment = Vector2.Dot(Vector2.up, transform.up);
+        float multiplier = 1f;
         if(collision.collider.TryGetComponent<LandingPad>(out var landingPad))
         {
-            float scoreMultiplier = landingPad.GetScoreMultiplier();
-            int score = Mathf.RoundToInt((CalculateAngleScore(alignment) + CalculateSpeedScore(velocityMag)) * scoreMultiplier);
-            Debug.Log($"Landed on Pad! Score: {score} (Multiplier: {scoreMultiplier})");
+            multiplier = landingPad.GetScoreMultiplier();
         }
         
     
         if (velocityMag > MaxLandingVelocity)
         {
+            hasLanded = true;
             Debug.Log("Crashed: Too fast!");
+            onLanded?.Invoke(this, new LandedEventArgs { 
+                landingType = LandingType.TooFastLanding,
+                Score = 0,
+                LandingSpeed = velocityMag,
+                LandingAngle = alignment,
+                Multiplier = multiplier
+            });
             return;
         }
 
         if (alignment < MinLandingAlignment)
         {
+            hasLanded = true;
             Debug.Log("Crashed: Too tilted!");
+            onLanded?.Invoke(this, new LandedEventArgs { 
+                landingType = alignment < 0 ? LandingType.TooSteepAngle : LandingType.WrongLandingAngle,
+                Score = 0,
+                LandingSpeed = velocityMag,
+                LandingAngle = alignment,
+                Multiplier = multiplier
+            });
             return;
         }
 
@@ -105,11 +145,17 @@ public class Lander : MonoBehaviour
 
         float angleScore = CalculateAngleScore(alignment);
         float speedScore = CalculateSpeedScore(velocityMag);
-
+        int finalScore = Mathf.RoundToInt((angleScore + speedScore) * multiplier);
         
-        Debug.Log($"Scores -> Angle: {angleScore} | Speed: {speedScore}");
+        hasLanded = true;
+        Debug.Log($"Scores -> Angle: {angleScore} | Speed: {speedScore} | Multiplier: {multiplier}");
             onLanded?.Invoke(this, new LandedEventArgs { 
-                Score = Mathf.RoundToInt(angleScore + speedScore) });
+                landingType = LandingType.Sucess,
+                Score = finalScore,
+                LandingSpeed = velocityMag,
+                LandingAngle = alignment,
+                Multiplier = multiplier
+            });
 
     }
 
@@ -150,8 +196,6 @@ public class Lander : MonoBehaviour
         }
 
     }
-
-
     private void ConsumeFuel()
     {
         float fuelConsumed = 1f; // Adjust as needed
