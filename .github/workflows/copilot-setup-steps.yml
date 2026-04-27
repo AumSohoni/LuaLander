@@ -1,0 +1,38 @@
+name: Copilot Setup Steps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          lfs: true
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore and compile C# projects
+        shell: bash
+        run: |
+          dotnet restore 2D-SpaceRocket.sln
+          dotnet build 2D-SpaceRocket.sln --configuration Release --no-restore
+
+      - name: Display Unity editor version
+        shell: bash
+        run: |
+          grep -n "^m_EditorVersion:" ProjectSettings/ProjectVersion.txt

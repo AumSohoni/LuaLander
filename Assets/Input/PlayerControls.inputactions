@@ -1,0 +1,118 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39fa3d8997a24136984ca6e2c99902bc, type: 3}
+  m_Name: PlayerControls
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionAsset
+  m_ActionMaps:
+  - m_Name: Gameplay
+    m_Id: be95cc92-4ce6-41f1-a9d4-bd8975939145
+    m_Asset: {fileID: 11400000}
+    m_Actions:
+    - m_Name: Thrust
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: f2753b8a-ec00-4e19-99fa-db8524797c4e
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: RotateLeft
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 985a689e-da8a-4806-ae26-2d1e8dfd0a7c
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: RotateRight
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 89fbbbec-d4b5-4d65-8ead-8feea331c0c1
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Bindings:
+    - m_Name: 
+      m_Id: 0079cdba-b7d2-476e-9a41-43663b845b1b
+      m_Path: <Keyboard>/w
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Thrust
+      m_Flags: 0
+    - m_Name: 
+      m_Id: ea6abcee-ed4e-48fd-8060-fc8abbc75794
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Thrust
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 3094b4a2-e918-4c36-b27b-d651bbe0e636
+      m_Path: <Gamepad>/buttonSouth
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Thrust
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 76391d22-423c-4fbf-a529-5a8b81ef67b8
+      m_Path: <Keyboard>/a
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotateLeft
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 6f00cde0-6c88-451c-8675-51c1c7083fb5
+      m_Path: <Keyboard>/leftArrow
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotateLeft
+      m_Flags: 0
+    - m_Name: 
+      m_Id: dacb452c-a3ab-4527-840a-64d6ac67d207
+      m_Path: <Gamepad>/leftStick/left
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotateLeft
+      m_Flags: 0
+    - m_Name: 
+      m_Id: b09a92f7-f407-4d28-9a2e-a6330cf52b84
+      m_Path: <Keyboard>/d
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotateRight
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 45c81972-a3bc-4050-b835-72403a5afe42
+      m_Path: <Keyboard>/rightArrow
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotateRight
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 8d322ae0-5c52-4d1e-b346-fd9e49d483ff
+      m_Path: <Gamepad>/leftStick/right
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotateRight
+      m_Flags: 0
+  m_ControlSchemes: []
+  m_IsProjectWide: 0

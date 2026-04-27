@@ -10,9 +10,16 @@ public class StatsUI : MonoBehaviour
     [SerializeField] private GameObject speedLeftArrow;
     [SerializeField] private GameObject speedRightArrow;
     [SerializeField] private Image fuelBar;
+    [SerializeField] private float fuelBarLerpSpeed = 8f;
+
+    private float currentFuelFill = 1f;
 
     private void Update()
     {
+        if (Lander.Instance == null || GameManager.Instance == null)
+        {
+            return;
+        }
         UpdateStatsTextMesh();
     }
 
@@ -32,7 +39,9 @@ public class StatsUI : MonoBehaviour
 
         if (fuelBar != null)
         {
-            fuelBar.fillAmount = Lander.Instance.GetFuelAmountNormalized();
+            float targetFuelFill = Lander.Instance.GetFuelAmountNormalized();
+            currentFuelFill = Mathf.Lerp(currentFuelFill, targetFuelFill, Time.deltaTime * fuelBarLerpSpeed);
+            fuelBar.fillAmount = currentFuelFill;
         }
     }
 }

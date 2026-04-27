@@ -1404,6 +1404,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LandedUI
   TitleText: {fileID: 874948934}
   statsText: {fileID: 1840419280}
+  panelRoot: {fileID: 0}
+  slideDuration: 0.35
+  hiddenYOffset: 700
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2462,6 +2465,7 @@ MonoBehaviour:
   speedLeftArrow: {fileID: 795682232}
   speedRightArrow: {fileID: 891310390}
   fuelBar: {fileID: 591443545}
+  fuelBarLerpSpeed: 8
 --- !u!1001 &1175415830
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2805,6 +2809,7 @@ GameObject:
   - component: {fileID: 1489103879}
   - component: {fileID: 1489103881}
   - component: {fileID: 1489103882}
+  - component: {fileID: 1489103883}
   m_Layer: 0
   m_Name: Lander
   m_TagString: Untagged
@@ -2922,8 +2927,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b72195f6cda8a2e4b9a811f7226315c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lander
-  Force: 700
+  force: 700
   turnSpeed: 100
+  inputHandler: {fileID: 0}
+  startingFuel: 10
+  fuelConsumePerSecond: 1
+  explosionParticleSystemPrefab: {fileID: 570857052369263401, guid: c74dc2f63ae57554fa6c194766a3433f, type: 3}
+  landingParticleSystemPrefab: {fileID: 570857052369263401, guid: 875afa24e7e4e6744adfe12a009bbdf5, type: 3}
+  crashShakeIntensity: 1
 --- !u!114 &1489103882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2939,6 +2950,25 @@ MonoBehaviour:
   leftThruster: {fileID: 232195646}
   rightThruster: {fileID: 1358349905}
   middleThruster: {fileID: 818915358}
+  minEmissionMultiplier: 10
+  maxEmissionMultiplier: 40
+--- !u!114 &1489103883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1489103873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 829169df60928cd40b15a277d05c2cce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputHandler
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  actionMapName: Gameplay
+  thrustActionName: Thrust
+  rotateLeftActionName: RotateLeft
+  rotateRightActionName: RotateRight
 --- !u!1 &1561722858
 GameObject:
   m_ObjectHideFlags: 0

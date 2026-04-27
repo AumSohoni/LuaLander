@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -10,14 +11,18 @@ public class GameManager : MonoBehaviour
     private float time;
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
     }
 
 
     private void Start()
     {
-        Lander.Instance.onCoinPickup += lander_CoinPickup;  
-        Lander.Instance.onLanded += lander_Landed;
+        StartCoroutine(BindToLanderRoutine());
     }
 
     private void Update()
@@ -38,7 +43,6 @@ public class GameManager : MonoBehaviour
     private int AddScore(int addScoreAmount)
     {
         score += addScoreAmount;
-        Debug.Log($"Score: {score}");
         return score;
 
     }
@@ -53,9 +57,23 @@ public class GameManager : MonoBehaviour
         return time;
     }
 
+    private void OnDestroy()
+    {
+        if (Lander.Instance != null)
+        {
+            Lander.Instance.onCoinPickup -= lander_CoinPickup;
+            Lander.Instance.onLanded -= lander_Landed;
+        }
+    }
 
+    private IEnumerator BindToLanderRoutine()
+    {
+        while (Lander.Instance == null)
+        {
+            yield return null;
+        }
 
-
-
-
+        Lander.Instance.onCoinPickup += lander_CoinPickup;
+        Lander.Instance.onLanded += lander_Landed;
+    }
 }
