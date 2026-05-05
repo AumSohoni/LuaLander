@@ -2,9 +2,13 @@ using UnityEngine;
 
 public class CoinPickup : MonoBehaviour
 {
-    public void DestroySelf() {
+    public void DestroySelf()
+    {
+        gameObject.SetActive(false);
+    }
 
-        Destroy(gameObject);
-
+    public void ResetPickup()
+    {
+        gameObject.SetActive(true);
     }
 }

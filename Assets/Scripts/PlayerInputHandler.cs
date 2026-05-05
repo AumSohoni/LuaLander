@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -63,7 +62,7 @@ public class PlayerInputHandler : MonoBehaviour
 
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            GameManager.Instance?.RestartLevel();
             return;
         }
 
@@ -122,6 +121,13 @@ public class PlayerInputHandler : MonoBehaviour
         SetTouchRotateRight(false);
     }
 
+    public void ResetGameplayState()
+    {
+        gameplayStarted = false;
+        ThrustInput = 0f;
+        RotateInput = 0f;
+    }
+
     private void BindActions()
     {
         if (inputActions == null)
@@ -147,7 +153,7 @@ public class PlayerInputHandler : MonoBehaviour
 
         if (thrustAction == null || rotateLeftAction == null || rotateRightAction == null)
         {
-           
+            Debug.LogError("PlayerInputHandler is missing one or more gameplay actions.");
         }
     }
 

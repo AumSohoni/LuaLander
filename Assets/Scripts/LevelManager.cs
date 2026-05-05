@@ -1,23 +1,11 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    public const string HighestUnlockedLevelKey = "HighestUnlockedLevel";
-
-    [Header("Level Flow")]
-    [SerializeField] private int maxLevelCount = 3;
-    [SerializeField] private float transitionDelay = 2f;
-    [SerializeField] private bool loopAfterLastLevel = true;
-    [SerializeField] private string winSceneName = "WinScene";
-    [SerializeField] private string levelScenePrefix = "Level";
-
-    public int CurrentLevel { get; private set; } = 1;
-
-    private Coroutine transitionCoroutine;
+    [SerializeField] private GameLevel[] levels;
+    private int currentLevelIndex = 0;
 
     private void Awake()
     {
@@ -27,119 +15,87 @@ public class LevelManager : MonoBehaviour
             return;
         }
         Instance = this;
-        CurrentLevel = Mathf.Clamp(GetCurrentLevelFromSceneName(), 1, maxLevelCount);
-        EnsureProgressIsInitialized();
+        DontDestroyOnLoad(gameObject);
+        AutoWireLevels();
     }
 
     private void Start()
     {
-        StartCoroutine(BindToLanderRoutine());
+        AutoWireLevels();
+        ActivateLevel(currentLevelIndex);
     }
 
-    private void OnDestroy()
+    public void OnSuccessfulLanding()
     {
-        if (Lander.Instance != null)
+        if (currentLevelIndex < levels.Length - 1)
         {
-            Lander.Instance.onLanded -= Lander_OnLanded;
-        }
-    }
-
-    private IEnumerator BindToLanderRoutine()
-    {
-        while (Lander.Instance == null)
-        {
-            yield return null;
-        }
-        Lander.Instance.onLanded += Lander_OnLanded;
-    }
-
-    public void LoadLevel(int levelIndex)
-    {
-        int clampedLevel = Mathf.Clamp(levelIndex, 1, maxLevelCount);
-        CurrentLevel = clampedLevel;
-        string sceneName = $"{levelScenePrefix}{clampedLevel}";
-        SceneLoader.LoadScene(sceneName);
-    }
-
-    public void LoadNextLevel()
-    {
-        int nextLevel = CurrentLevel + 1;
-        if (nextLevel > maxLevelCount)
-        {
-            if (!string.IsNullOrWhiteSpace(winSceneName) && !loopAfterLastLevel)
-            {
-                SceneLoader.LoadScene(winSceneName);
-                return;
-            }
-
-            nextLevel = 1;
-        }
-
-        LoadLevel(nextLevel);
-    }
-
-    public void RestartCurrentLevel()
-    {
-        LoadLevel(CurrentLevel);
-    }
-
-    public static int GetHighestUnlockedLevel(int maxLevel = 3)
-    {
-        return Mathf.Clamp(PlayerPrefs.GetInt(HighestUnlockedLevelKey, 1), 1, maxLevel);
-    }
-
-    public static void UnlockLevel(int level, int maxLevel = 3)
-    {
-        int highest = GetHighestUnlockedLevel(maxLevel);
-        int newHighest = Mathf.Clamp(Mathf.Max(highest, level), 1, maxLevel);
-        PlayerPrefs.SetInt(HighestUnlockedLevelKey, newHighest);
-        PlayerPrefs.Save();
-    }
-
-    private void Lander_OnLanded(object sender, Lander.LandedEventArgs e)
-    {
-        if (transitionCoroutine != null)
-        {
-            StopCoroutine(transitionCoroutine);
-        }
-        transitionCoroutine = StartCoroutine(HandleLandingResultRoutine(e));
-    }
-
-    private IEnumerator HandleLandingResultRoutine(Lander.LandedEventArgs e)
-    {
-        yield return new WaitForSeconds(transitionDelay);
-
-        if (e.landingType == Lander.LandingType.Sucess)
-        {
-            UnlockLevel(CurrentLevel + 1, maxLevelCount);
-            LoadNextLevel();
+            currentLevelIndex++;
+            ActivateLevel(currentLevelIndex);
         }
         else
         {
-            RestartCurrentLevel();
+            Debug.Log("All levels completed!");
         }
     }
 
-    private int GetCurrentLevelFromSceneName()
+    public void RestartLevel()
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName.StartsWith(levelScenePrefix))
+        ActivateLevel(currentLevelIndex);
+    }
+
+    public void ResetCurrentLevel()
+    {
+        ActivateLevel(currentLevelIndex);
+    }
+
+    private void ActivateLevel(int levelIndex)
+    {
+        if (levels == null || levels.Length == 0)
         {
-            string numberPart = sceneName.Substring(levelScenePrefix.Length);
-            if (int.TryParse(numberPart, out int level))
+            return;
+        }
+
+        currentLevelIndex = Mathf.Clamp(levelIndex, 0, levels.Length - 1);
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            if (levels[i] == null)
             {
-                return level;
+                continue;
+            }
+
+            if (i == currentLevelIndex)
+            {
+                levels[i].ActivateLevel();
+            }
+            else
+            {
+                levels[i].DeactivateLevel();
             }
         }
-        return 1;
     }
 
-    private void EnsureProgressIsInitialized()
+    private void AutoWireLevels()
     {
-        if (!PlayerPrefs.HasKey(HighestUnlockedLevelKey))
+        if (levels != null)
         {
-            PlayerPrefs.SetInt(HighestUnlockedLevelKey, 1);
-            PlayerPrefs.Save();
+            for (int i = 0; i < levels.Length; i++)
+            {
+                if (levels[i] != null)
+                {
+                    return;
+                }
+            }
         }
+
+        GameLevel[] foundLevels = FindObjectsByType<GameLevel>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        if (foundLevels == null || foundLevels.Length == 0)
+        {
+            Debug.LogError("LevelManager could not find any GameLevel objects in the scene.");
+            return;
+        }
+
+        System.Array.Sort(foundLevels, (a, b) => a.LevelIndex.CompareTo(b.LevelIndex));
+        levels = foundLevels;
     }
 }

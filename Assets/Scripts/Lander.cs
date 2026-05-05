@@ -59,6 +59,8 @@ public class Lander : MonoBehaviour
     private float coinAmount;
     private bool hasLanded;
     private bool hasStarted;
+    private Vector3 defaultSpawnPosition;
+    private Quaternion defaultSpawnRotation;
 
     public float FuelAmount => fuelAmount;
     public float CoinAmount => coinAmount;
@@ -70,6 +72,8 @@ public class Lander : MonoBehaviour
     {
         Instance = this;
         landerRb = GetComponent<Rigidbody2D>();
+        defaultSpawnPosition = transform.position;
+        defaultSpawnRotation = transform.rotation;
         defaultGravityScale = landerRb.gravityScale;
         landerRb.gravityScale = 0f;
         fuelAmount = startingFuel;
@@ -168,10 +172,7 @@ public class Lander : MonoBehaviour
         AudioManager.Instance?.PlayLandingSuccessSfx();
 
         SpawnLandingParticles(collidedWithLandingPad ? landingPad.transform.position : landingPosition);
-        if (collidedWithLandingPad)
-        {
-            ScorePopupManager.Instance?.ShowScorePopup(finalScore, landingPad.transform.position);
-        }
+      
 
         onLanded?.Invoke(this, new LandedEventArgs
         {
@@ -285,6 +286,33 @@ public class Lander : MonoBehaviour
         if (landerRb != null)
         {
             landerRb.gravityScale = defaultGravityScale;
+        }
+    }
+
+    public void ResetForLevel(Transform spawnPoint)
+    {
+        hasLanded = false;
+        hasStarted = false;
+        CurrentThrustInput = 0f;
+        fuelAmount = startingFuel;
+        maxFuel = startingFuel;
+        coinAmount = 0f;
+
+        Vector3 spawnPosition = spawnPoint != null ? spawnPoint.position : defaultSpawnPosition;
+        Quaternion spawnRotation = spawnPoint != null ? spawnPoint.rotation : defaultSpawnRotation;
+
+        transform.SetPositionAndRotation(spawnPosition, spawnRotation);
+
+        if (landerRb != null)
+        {
+            landerRb.linearVelocity = Vector2.zero;
+            landerRb.angularVelocity = 0f;
+            landerRb.gravityScale = 0f;
+        }
+
+        if (inputHandler != null)
+        {
+            inputHandler.ResetGameplayState();
         }
     }
 

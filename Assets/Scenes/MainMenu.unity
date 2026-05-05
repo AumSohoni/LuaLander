@@ -311,70 +311,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1483311117
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1483311119}
-  - component: {fileID: 1483311118}
-  m_Layer: 0
-  m_Name: MainMenuController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1483311118
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1483311117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0ca427fd9b80ce48992256332c3df6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MainMenu
-  playHighestUnlockedLevel: 1
-  fallbackPlayLevel: 1
-  maxLevelCount: 3
-  levelSelectPanel: {fileID: 0}
-  levelButtons:
-  - levelIndex: 0
-    button: {fileID: 0}
-    label: {fileID: 0}
-    lockOverlay: {fileID: 0}
-  - levelIndex: 0
-    button: {fileID: 0}
-    label: {fileID: 0}
-    lockOverlay: {fileID: 0}
-  - levelIndex: 0
-    button: {fileID: 0}
-    label: {fileID: 0}
-    lockOverlay: {fileID: 0}
-  titleTransform: {fileID: 0}
-  pulseSpeed: 1.5
-  pulseAmount: 0.08
---- !u!4 &1483311119
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1483311117}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1888483857
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,7 +491,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1483311119}
   - {fileID: 1103395374}
   - {fileID: 1888483860}
   - {fileID: 7907963133949264569}

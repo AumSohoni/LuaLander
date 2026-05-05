@@ -4,6 +4,11 @@ public class FuelPickup : MonoBehaviour
 {
     public void DestroySelf()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+    }
+
+    public void ResetPickup()
+    {
+        gameObject.SetActive(true);
     }
 }

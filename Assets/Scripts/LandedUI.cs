@@ -1,6 +1,7 @@
-using UnityEngine;
-using TMPro;
 using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class LandedUI : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class LandedUI : MonoBehaviour
     private TextMeshProUGUI TitleText;
     [SerializeField] private TextMeshProUGUI statsText;
     [SerializeField] private RectTransform panelRoot;
+    [SerializeField] private Button continueButton;
+    [SerializeField] private Button restartButton;
     [SerializeField] private float slideDuration = 0.35f;
     [SerializeField] private float hiddenYOffset = 700f;
 
@@ -23,6 +26,16 @@ public class LandedUI : MonoBehaviour
             panelRoot = transform as RectTransform;
         }
 
+        if (continueButton != null)
+        {
+            continueButton.onClick.AddListener(OnContinuePressed);
+        }
+
+        if (restartButton != null)
+        {
+            restartButton.onClick.AddListener(OnRestartPressed);
+        }
+
         shownAnchoredPosition = panelRoot.anchoredPosition;
         hiddenAnchoredPosition = shownAnchoredPosition + Vector2.down * hiddenYOffset;
         panelRoot.anchoredPosition = hiddenAnchoredPosition;
@@ -34,7 +47,7 @@ public class LandedUI : MonoBehaviour
         Show();
         if (statsText != null && TitleText != null)
         {
-           if(e.landingType == Lander.LandingType.Sucess)
+            if (e.landingType == Lander.LandingType.Sucess)
             {
                 TitleText.text = "Successful Landing!";
             }
@@ -96,5 +109,35 @@ public class LandedUI : MonoBehaviour
             yield return null;
         }
         panelRoot.anchoredPosition = shownAnchoredPosition;
+    }
+
+    public void ShowLandingOutcome(bool isSuccessful)
+    {
+        if (continueButton != null)
+        {
+            continueButton.gameObject.SetActive(isSuccessful);
+            continueButton.interactable = isSuccessful;
+        }
+        if (restartButton != null)
+        {
+            restartButton.gameObject.SetActive(!isSuccessful);
+            restartButton.interactable = !isSuccessful;
+        }
+        gameObject.SetActive(true);
+    }
+
+    public void HideUI()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void OnContinuePressed()
+    {
+        GameManager.Instance?.OnContinuePressed();
+    }
+
+    public void OnRestartPressed()
+    {
+        GameManager.Instance?.RestartLevel();
     }
 }
