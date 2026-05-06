@@ -95,6 +95,7 @@ public class GameManager : MonoBehaviour
         if (mainMenuPanel != null)
         {
             mainMenuPanel.SetActive(false);
+            SceneManager.LoadScene("Level1");
         }
     }
 
