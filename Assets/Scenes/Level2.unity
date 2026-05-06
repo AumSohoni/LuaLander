@@ -3452,10 +3452,11 @@ MonoBehaviour:
   thrusterSource: {fileID: 0}
   sfxPoolSize: 5
   defaultMusic: {fileID: 0}
-  thrusterClip: {fileID: 0}
-  landingSuccessClip: {fileID: 0}
-  crashClip: {fileID: 0}
-  coinClip: {fileID: 0}
+  thrusterClip: {fileID: 8300000, guid: 6d68f74438f613b45b2181d4e917474c, type: 3}
+  landingSuccessClip: {fileID: 8300000, guid: 4c9f9d63f11fa4d4ca1c537cd058256d, type: 3}
+  crashClip: {fileID: 8300000, guid: fbd9c5bf252a6c14b9bb3a84dba2510c, type: 3}
+  coinClip: {fileID: 8300000, guid: 4286836a473df634692d7fc2988b47bd, type: 3}
+  fuelPickupClip: {fileID: 8300000, guid: 484dfe2ec7cb08047b216f2dd52796d5, type: 3}
   uiClickClip: {fileID: 0}
   defaultMusicVolume: 0.8
   defaultSfxVolume: 0.8

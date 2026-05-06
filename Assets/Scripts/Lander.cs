@@ -258,6 +258,7 @@ public class Lander : MonoBehaviour
             {
                 maxFuel = fuelAmount;
             }
+            AudioManager.Instance?.PlayFuelPickupSfx();
             fuelPickup.DestroySelf();
         }
 

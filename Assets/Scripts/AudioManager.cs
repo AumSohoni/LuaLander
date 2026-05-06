@@ -19,6 +19,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip landingSuccessClip;
     [SerializeField] private AudioClip crashClip;
     [SerializeField] private AudioClip coinClip;
+    [SerializeField] private AudioClip fuelPickupClip;
     [SerializeField] private AudioClip uiClickClip;
 
     [Header("Default Volumes")]
@@ -29,6 +30,7 @@ public class AudioManager : MonoBehaviour
     private int nextSfxSourceIndex;
     private float musicVolume;
     private float sfxVolume;
+    private float thrusterTargetVolume;
 
     private void Awake()
     {
@@ -96,15 +98,35 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        thrusterSource.volume = Mathf.Clamp01(intensity) * sfxVolume;
+        if (thrusterSource.clip != thrusterClip)
+        {
+            thrusterSource.Stop();
+            thrusterSource.clip = thrusterClip;
+        }
+
         if (isActive)
         {
+            thrusterTargetVolume = Mathf.Clamp01(intensity) * sfxVolume;
             if (!thrusterSource.isPlaying)
             {
                 thrusterSource.Play();
             }
         }
-        else if (thrusterSource.isPlaying)
+        else
+        {
+            thrusterTargetVolume = 0f;
+        }
+    }
+
+    private void Update()
+    {
+        if (thrusterSource == null)
+        {
+            return;
+        }
+
+        thrusterSource.volume = Mathf.MoveTowards(thrusterSource.volume, thrusterTargetVolume, Time.deltaTime * 6f);
+        if (thrusterTargetVolume <= 0f && thrusterSource.isPlaying && thrusterSource.volume <= 0.01f)
         {
             thrusterSource.Stop();
         }
@@ -149,6 +171,11 @@ public class AudioManager : MonoBehaviour
     public void PlayCoinSfx()
     {
         PlaySFX(coinClip);
+    }
+
+    public void PlayFuelPickupSfx()
+    {
+        PlaySFX(fuelPickupClip);
     }
 
     public void PlayUIClickSfx()
@@ -225,6 +252,7 @@ public class AudioManager : MonoBehaviour
         if (thrusterSource != null)
         {
             thrusterSource.volume = sfxVolume;
+            thrusterTargetVolume = Mathf.Min(thrusterTargetVolume, sfxVolume);
         }
 
         foreach (AudioSource source in sfxSources)
